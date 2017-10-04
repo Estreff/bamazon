@@ -26,23 +26,23 @@ inquirer
                 if (error) throw error;
                     var table = new AsciiTable('Products for Sale')
                     
-                    table.setHeading('Item ID', 'Product Name', 'Dept Name', 'Sale Price', 'QTY OH');
+                    table.setHeading('Item ID', 'Product Name', 'Dept Name', 'Sale Price', 'QTY OH', 'Products Sold', 'Product Sales');
 
                         for(var i = 0; i < results.length; i++) {
-                            table.addRow(results[i].item_id, results[i].product_name, results[i].department_name, results[i].price, results[i].stock_quantity);
+                            table.addRow(results[i].item_id, results[i].product_name, results[i].department_name, results[i].price, results[i].stock_quantity, results[i].product_sold, results[i].product_sales);
                         }
                         console.log(table.toString());
                     connection.end();
             });
 
-        }else if(operator === 'View Low Inventory'){
+        }else if(operator === 'View Low Inventory'){ 
             connection.query(`SELECT * FROM bamazon.products WHERE stock_quantity < 5`, function (error, results, fields) {
                 if (error) throw error;
                     var minTable = new AsciiTable('Min/Max Report')
-                minTable.setHeading('Item ID', 'Product Name', 'Dept Name', 'Sale Price', 'QTY OH');
+                minTable.setHeading('Item ID', 'Product Name', 'Dept Name', 'Sale Price', 'QTY OH', 'Products Sold', 'Product Sales');
                 
                     for(var i = 0; i < results.length; i++) {
-                        minTable.addRow(results[i].item_id, results[i].product_name, results[i].department_name, results[i].price, results[i].stock_quantity);
+                        minTable.addRow(results[i].item_id, results[i].product_name, results[i].department_name, results[i].price, results[i].stock_quantity, results[i].product_sold, results[i].product_sales);
                     }
                     console.log(minTable.toString());
                 connection.end();

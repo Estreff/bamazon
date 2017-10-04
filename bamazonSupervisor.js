@@ -20,9 +20,29 @@ inquirer
     ]).then(function(supervisor) {
 
         var todo = supervisor.menuResult;
-
+        connection.connect();
         if(todo === 'View Products Sales by Department') {
-            console.log('What Department would you like to see?' )
+
+            connection.query(
+                `SELECT departments.department_id, departments.department_name, departments.over_head_costs, products.product_sold, products.product_sales, products.product_sales - departments.over_head_costs AS total_profit
+                from departments
+                left join products on departments.department_name = products.department_name
+                group by departments.department_name
+                order by departments.department_id`,
+                function (error, results, fields) {
+                if (error) throw error;
+
+                var deptTable = new AsciiTable('Product Sales by Department')
+                deptTable.setHeading('Dept ID', 'Department Name', 'Over Head Costs', 'Products Sold', 'Product Sales', 'Total Profit');
+                
+                    for(var i = 0; i < results.length; i++) {
+                        deptTable.addRow(results[i].department_id, results[i].department_name, results[i].over_head_costs, results[i].product_sold, results[i].product_sales, results[i].total_profit);
+                    }
+                    console.log(deptTable.toString());
+                // console.log(results);
+                connection.end();
+
+            });
 
         }else if(todo === 'Create New Department') {
             console.log('What department would you like to create?')
