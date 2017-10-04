@@ -1,0 +1,24 @@
+{
+  "name": "bamazon",
+  "version": "1.0.0",
+  "description": "Amazon like purchasing",
+  "main": "bamazonCustomer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Estreff/bamazon.git"
+  },
+  "author": "estreff",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Estreff/bamazon/issues"
+  },
+  "homepage": "https://github.com/Estreff/bamazon#readme",
+  "dependencies": {
+    "ascii-table": "0.0.9",
+    "inquirer": "^3.3.0",
+    "mysql": "^2.14.1"
+  }
+}

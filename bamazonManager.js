@@ -1,0 +1,124 @@
+var inquirer = require('inquirer');
+var mysql = require('mysql');
+var AsciiTable = require('ascii-table');
+
+var connection = mysql.createConnection({
+    host     : 'localhost',
+    user     : 'root',
+    password : 'password',
+    database : 'bamazon'
+});
+
+inquirer
+    .prompt([
+        {
+            type: 'list',
+            name: 'menuResult',
+            message: 'What would you like to do?',
+            choices: ['View Products for Sale', 'View Low Inventory', 'Add Inventory', 'Add New Product', 'Exit']    
+        }
+    ]).then(function(menu){   
+        var operator = menu.menuResult;
+        connection.connect();
+
+        if(operator === 'View Products for Sale'){
+            connection.query(`SELECT * FROM bamazon.products`, function (error, results, fields) {
+                if (error) throw error;
+                    var table = new AsciiTable('Products for Sale')
+                    
+                    table.setHeading('Item ID', 'Product Name', 'Dept Name', 'Sale Price', 'QTY OH');
+
+                        for(var i = 0; i < results.length; i++) {
+                            table.addRow(results[i].item_id, results[i].product_name, results[i].department_name, results[i].price, results[i].stock_quantity);
+                        }
+                        console.log(table.toString());
+                    connection.end();
+            });
+
+        }else if(operator === 'View Low Inventory'){
+            connection.query(`SELECT * FROM bamazon.products WHERE stock_quantity < 5`, function (error, results, fields) {
+                if (error) throw error;
+                    var minTable = new AsciiTable('Min/Max Report')
+                minTable.setHeading('Item ID', 'Product Name', 'Dept Name', 'Sale Price', 'QTY OH');
+                
+                    for(var i = 0; i < results.length; i++) {
+                        minTable.addRow(results[i].item_id, results[i].product_name, results[i].department_name, results[i].price, results[i].stock_quantity);
+                    }
+                    console.log(minTable.toString());
+                connection.end();
+            });
+            
+        }else if(operator === 'Add Inventory'){
+            inquirer
+                .prompt([
+                    {
+                        type: 'input',
+                        name: 'addProduct',
+                        message: 'What Product would you like to receive more of? (Product ID)?'
+                    },
+                    {
+                        type: 'input',
+                        name: 'addQuantity',
+                        message: 'How many would you like to receive?'
+
+                    }
+                ]).then(function(receive) {
+                    var receiveProduct = receive.addProduct;
+                    var receiveQuantity = parseFloat(receive.addQuantity);
+
+                    connection.query(`SELECT * FROM bamazon.products where item_id = ${receiveProduct}`, function (error, results, fields) {
+                        if (error) throw error; 
+                        var productOH = results[0].stock_quantity;
+                        var productName = results[0].product_name;
+                        var addQuantity = productOH + receiveQuantity;
+
+                        connection.query(`UPDATE products SET stock_quantity = ${addQuantity} WHERE item_id = ${receiveProduct}`, function (error, results, fields) {
+                            if (error) throw error; 
+                            console.log(`You have received ${receiveQuantity} of productID ${receiveProduct} to give you a total of ${addQuantity} ${productName}`);
+                            connection.end();
+                        });
+                    });
+                });
+
+        }else if(operator === 'Add New Product'){
+            console.log('Add New Product');
+            inquirer
+                .prompt([
+                    {
+                        type: 'input',
+                        name: 'productName',
+                        message: 'What is the name of the product you would like to create?'
+                    },
+                    {
+                        type: 'input',
+                        name: 'departmentName',
+                        message: 'How department does this belong in?'
+                    },
+                    {
+                        type: 'input',
+                        name: 'price',
+                        message: 'How much will this cost our customer?'
+                    },
+                    {
+                        type: 'input',
+                        name: 'stock',
+                        message: 'How much stock do we have?'
+                    }
+                ]).then(function(create) {
+                    post = {
+                        'product_name': create.productName,
+                        'department_name': create.departmentName,
+                        'price': create.price,
+                        'stock_quantity': create.stock
+                    };
+                    connection.query(`INSERT INTO bamazon.products SET ?`, post, function (error, results, fields) {
+                        if (error) throw error;
+                        console.log(`You have added ${create.stock} ${create.productName} into the ${create.departmentName} at the price of ${create.price}`);
+                        connection.end();
+                    });
+                });
+        }else {
+            connection.end();
+            return;
+        }       
+    });
