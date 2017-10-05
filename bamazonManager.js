@@ -22,7 +22,10 @@ inquirer
         connection.connect();
 
         if(operator === 'View Products for Sale'){
-            connection.query(`SELECT * FROM bamazon.products`, function (error, results, fields) {
+            connection.query(`select products.item_id, products.product_name,  departments.department_name, products.price, products.stock_quantity, products.product_sold, products.product_sales
+            from products
+            left join departments on products.department_id = departments.department_id`
+            , function (error, results, fields) {
                 if (error) throw error;
                     var table = new AsciiTable('Products for Sale')
                     
@@ -36,7 +39,11 @@ inquirer
             });
 
         }else if(operator === 'View Low Inventory'){ 
-            connection.query(`SELECT * FROM bamazon.products WHERE stock_quantity < 5`, function (error, results, fields) {
+            connection.query(`select products.item_id, products.product_name,  departments.department_name, products.price, products.stock_quantity, products.product_sold, products.product_sales
+            from products
+            left join departments on products.department_id = departments.department_id
+            where products.stock_quantity < 5`
+            , function (error, results, fields) {
                 if (error) throw error;
                     var minTable = new AsciiTable('Min/Max Report')
                 minTable.setHeading('Item ID', 'Product Name', 'Dept Name', 'Sale Price', 'QTY OH', 'Products Sold', 'Product Sales');
@@ -92,7 +99,7 @@ inquirer
                     {
                         type: 'input',
                         name: 'departmentName',
-                        message: 'How department does this belong in?'
+                        message: 'What department does this belong in?'
                     },
                     {
                         type: 'input',

@@ -26,7 +26,7 @@ inquirer
             connection.query(
                 `SELECT departments.department_id, departments.department_name, departments.over_head_costs, products.product_sold, products.product_sales, products.product_sales - departments.over_head_costs AS total_profit
                 from departments
-                left join products on departments.department_name = products.department_name
+                left join products on departments.department_id = products.department_id
                 group by departments.department_name
                 order by departments.department_id`,
                 function (error, results, fields) {
