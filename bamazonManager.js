@@ -67,19 +67,25 @@ inquirer
                         type: 'input',
                         name: 'addQuantity',
                         message: 'How many would you like to receive?'
-
                     }
                 ]).then(function(receive) {
                     var receiveProduct = receive.addProduct;
                     var receiveQuantity = parseFloat(receive.addQuantity);
 
-                    connection.query(`SELECT * FROM bamazon.products where item_id = ${receiveProduct}`, function (error, results, fields) {
+                    connection.query(`SELECT * FROM bamazon.products where ?`,
+                        {
+                            item_id: receiveProduct
+                        }, function (error, results, fields) {
                         if (error) throw error; 
                         var productOH = results[0].stock_quantity;
                         var productName = results[0].product_name;
                         var addQuantity = productOH + receiveQuantity;
 
-                        connection.query(`UPDATE products SET stock_quantity = ${addQuantity} WHERE item_id = ${receiveProduct}`, function (error, results, fields) {
+                        connection.query(`UPDATE products SET ? WHERE ?`,
+                        [{stock_quantity:  addQuantity
+                        },
+                            {item_id: receiveProduct
+                        }], function (error, results, fields) {
                             if (error) throw error; 
                             console.log(`You have received ${receiveQuantity} of productID ${receiveProduct} to give you a total of ${addQuantity} ${productName}`);
                             connection.end();
@@ -88,8 +94,16 @@ inquirer
                 });
 
         }else if(operator === 'Add New Product'){
-            console.log('Add New Product');
-            inquirer
+            connection.query(`SELECT * FROM bamazon.departments ORDER BY department_name`, function (error, results, fields) {
+            if (error) throw error;
+
+            var deptNames = [];
+                for(var i = 0; i < results.length; i++) {
+                    var deptObject = results[i].department_name;
+                    deptNames.push(deptObject);
+                }
+                // console.log(deptNames);
+                inquirer
                 .prompt([
                     {
                         type: 'input',
@@ -97,9 +111,10 @@ inquirer
                         message: 'What is the name of the product you would like to create?'
                     },
                     {
-                        type: 'input',
+                        type: 'list',
                         name: 'departmentName',
-                        message: 'What department does this belong in?'
+                        message: 'What department does this belong in?',
+                        choices: deptNames
                     },
                     {
                         type: 'input',
@@ -109,23 +124,33 @@ inquirer
                     {
                         type: 'input',
                         name: 'stock',
-                        message: 'How much stock do we have?'
+                        message: 'How much stock would you like to add?'
                     }
-                ]).then(function(create) {
-                    post = {
-                        'product_name': create.productName,
-                        'department_name': create.departmentName,
-                        'price': create.price,
-                        'stock_quantity': create.stock
-                    };
-                    connection.query(`INSERT INTO bamazon.products SET ?`, post, function (error, results, fields) {
+                ]).then(function(deptLookup) {
+                    var deptFind = deptLookup.departmentName;
+                    connection.query(`SELECT * FROM departments WHERE ?`, {
+                        // SELECT * FROM departments WHERE department_name='Kitchen'
+                        department_name: deptFind
+                    }, function (error, results, fields) {
                         if (error) throw error;
-                        console.log(`You have added ${create.stock} ${create.productName} into the ${create.departmentName} at the price of ${create.price}`);
-                        connection.end();
+                        var deptID = results[0].department_id;
+                   
+                        post = {
+                            'product_name': deptLookup.productName,
+                            'department_id': deptID,
+                            'price': deptLookup.price,
+                            'stock_quantity': deptLookup.stock
+                        };
+                        connection.query(`INSERT INTO bamazon.products SET ?`, post, function (error, results, fields) {
+                            if (error) throw error;
+                            console.log(`You have added ${deptLookup.stock} ${deptLookup.productName} into the ${deptLookup.departmentName} at the price of ${deptLookup.price}`);
+                            connection.end();
+                        });
                     });
                 });
-        }else {
-            connection.end();
+            });
+            }else {
+                connection.end();
             return;
         }       
     });
