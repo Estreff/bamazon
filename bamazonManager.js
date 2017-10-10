@@ -24,10 +24,10 @@ inquirer
         if(operator === 'View Products for Sale'){
             connection.query(`select products.item_id, products.product_name,  departments.department_name, products.price, products.stock_quantity, products.product_sold, products.product_sales
             from products
-            left join departments on products.department_id = departments.department_id`
-            , function (error, results, fields) {
+            left join departments on products.department_id = departments.department_id`,
+            function (error, results, fields) {
                 if (error) throw error;
-                    var table = new AsciiTable('Products for Sale')
+                    var table = new AsciiTable('Products for Sale');
                     
                     table.setHeading('Item ID', 'Product Name', 'Dept Name', 'Sale Price', 'QTY OH', 'Products Sold', 'Product Sales');
 
@@ -42,11 +42,11 @@ inquirer
             connection.query(`select products.item_id, products.product_name,  departments.department_name, products.price, products.stock_quantity, products.product_sold, products.product_sales
             from products
             left join departments on products.department_id = departments.department_id
-            where products.stock_quantity < 5`
-            , function (error, results, fields) {
+            where products.stock_quantity < 5`,
+            function (error, results, fields) {
                 if (error) throw error;
-                    var minTable = new AsciiTable('Min/Max Report')
-                minTable.setHeading('Item ID', 'Product Name', 'Dept Name', 'Sale Price', 'QTY OH', 'Products Sold', 'Product Sales');
+                    var minTable = new AsciiTable('Min/Max Report');
+                    minTable.setHeading('Item ID', 'Product Name', 'Dept Name', 'Sale Price', 'QTY OH', 'Products Sold', 'Product Sales');
                 
                     for(var i = 0; i < results.length; i++) {
                         minTable.addRow(results[i].item_id, results[i].product_name, results[i].department_name, results[i].price, results[i].stock_quantity, results[i].product_sold, results[i].product_sales);
