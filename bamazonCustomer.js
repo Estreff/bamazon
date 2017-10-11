@@ -1,5 +1,15 @@
-    
- 
+var inquirer = require('inquirer');
+var mysql = require('mysql');
+var AsciiTable = require('ascii-table');
+
+var connection = mysql.createConnection({
+    host     : 'localhost',
+    user     : 'root',
+    password : 'password',
+    database : 'bamazon'
+});
+   
+function bamazonCustomer() {  
 inquirer
     .prompt([
         {
@@ -56,3 +66,6 @@ inquirer
                     });
                 });
     });
+}
+
+module.exports = bamazonCustomer;
