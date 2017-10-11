@@ -6,7 +6,7 @@ This is a Amazon like product that has e-commerce type ordering with an inventor
 
 ## Code Example
 
-<ul>node bamazonCLI.js to run program</ul>
+<ul><h3><b>node bamazonCLI.js to run program</b></h3></ul>
     <li>Customer Access</li>
     <li>Manager Access</li>
     <li>Supervisor Access</li>
