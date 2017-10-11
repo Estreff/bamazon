@@ -25,5 +25,5 @@ Erik Streff
 
 ## Video Walk Through
 
-[![Watch the video](/assets/images/Recording#1.mp4)]
+[![Watch the video](https://github.com/Estreff/bamazon/images/bamazon.mp4)]
 
