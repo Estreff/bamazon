@@ -6,10 +6,10 @@ This is a Amazon like product that has e-commerce type ordering with an inventor
 
 ## Code Example
 
-node bamazonCLI.js to run programclear
-Customer Access
-Manager Access
-Supervisor Access
+node bamazonCLI.js to run program <br>
+Customer Access <br>
+Manager Access  <br>
+Supervisor Access <br>
 
 ## Motivation
 
@@ -26,5 +26,5 @@ Erik Streff
 
 ## Video Walk Through
 
-[![Watch the video](https://drive.google.com/open?id=0Bz4Ih1ADce9EeW9pQ2FZTUZBbVk)]
+<a href="https://drive.google.com/open?id=0Bz4Ih1ADce9EeW9pQ2FZTUZBbVk">Watch Tutorial Video</a>;
 
